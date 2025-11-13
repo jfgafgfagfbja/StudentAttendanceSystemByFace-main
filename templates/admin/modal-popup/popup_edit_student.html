@@ -1,0 +1,96 @@
+<div id="editStudentModal" tabindex="-1" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa thông tin sinh viên</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" class="editStudentForm" id="editStudentForm" action="">
+                    {% csrf_token %}
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="id_student_edit" class="col-sm-2 control-label col-form-label">Mã sinh viên</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="id_student_edit" id="id_student_edit"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="student_name_edit" class="col-sm-2 control-label col-form-label">Tên sinh
+                            viên</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="student_name_edit" id="student_name_edit"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="email_edit" class="col-sm-2 control-label col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="email_edit" id="email_edit" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="phone_edit" class="col-sm-2 control-label col-form-label">Số điện thoại</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="phone_edit" id="phone_edit" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="address_edit" class="col-sm-2 control-label col-form-label">Địa chỉ</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="address_edit" id="address_edit" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="birthday_edit" class="col-sm-2 control-label col-form-label">Ngày sinh</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="birthday_edit" name="birthday_edit"
+                                       placeholder="dd/mm/yyyy"/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text h-100"><i class="mdi mdi-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-group row d-flex justify-content-center">
+                        <label for="PathImageFolder_edit"
+                               class="col-sm-2 control-label col-form-label">PathImageFolder</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="PathImageFolder_edit"
+                                       id="PathImageFolder_edit"
+                                       required readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <img id="video-feed_edit" style="width:100%"
+                         src="https://www.womanthology.co.uk/wp-content/uploads/2017/06/facescan.gif"
+                         alt="Live Video Feed"/>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-success text-white">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

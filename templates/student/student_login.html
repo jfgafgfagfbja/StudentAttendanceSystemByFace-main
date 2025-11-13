@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'assets/images/favicon.png' %}"/>
+
+  <style>
+    :root {
+      --brand: #28c697;
+      --radius: 16px;
+    }
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #f6f8fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .auth-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      max-width: 1100px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* CỘT TRÁI */
+    .auth-left {
+      flex: 1;
+      padding: 50px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .auth-left .brand-logo {
+      max-width: 130px;
+      margin-bottom: 16px;
+    }
+    .auth-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1f2937;
+    }
+    .auth-subtitle {
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+    .form-label {
+      font-weight: 500;
+      color: #374151;
+    }
+    .form-control:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 .2rem rgba(40,198,151,.18);
+    }
+    .btn-primary {
+      background-color: var(--brand);
+      border-color: var(--brand);
+      font-weight: 500;
+    }
+    .btn-primary:hover {
+      background-color: #22b285;
+      border-color: #22b285;
+    }
+    .auth-footer {
+      margin-top: 18px;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    /* CỘT PHẢI */
+    .auth-right {
+      flex: 1.1;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 8s ease;
+    }
+    .auth-right:hover img {
+      transform: scale(1.05);
+    }
+    .auth-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.15) 100%);
+      pointer-events: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+      .auth-container {
+        flex-direction: column;
+        box-shadow: none;
+      }
+      .auth-right {
+        height: 200px;
+      }
+      .auth-left {
+        padding: 32px 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container">
+    <!-- Cột trái: Logo + Tiêu đề + Form -->
+    <div class="auth-left">
+      <img src="{% static 'assets/images/1.png' %}" alt="Logo" class="brand-logo">
+      <h3 class="auth-title">Cổng thông tin sinh viên</h3>
+      <p class="auth-subtitle">Hệ thống quản lý điểm danh</p>
+
+      <form action="#" method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_student" class="form-label">Mã số sinh viên</label>
+          <input type="text" class="form-control" id="id_student" name="id_student" placeholder="Nhập MSSV">
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Mật khẩu</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="••••••••">
+        </div>
+
+        {% if error_message %}
+          <div class="alert alert-danger py-2">{{ error_message }}</div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary w-100 py-2">Đăng nhập</button>
+      </form>
+
+      <div class="auth-footer">© {{ now|date:"Y" }} FaceByAttendance · All rights reserved</div>
+    </div>
+
+    <!-- Cột phải: Ảnh minh họa -->
+    <div class="auth-right">
+      <img src="{% static 'assets/images/2.png' %}" alt="Campus Image">
+      <div class="auth-overlay"></div>
+    </div>
+  </div>
+
+  <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+{% extends "admin/base_admin_dashboard.html" %}
+
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title mb-3">Danh sách sinh viên</h3>
+            {% for student in students_in_class %}
+                {% if forloop.first %}
+                    <a href="#" class="btn btn-success mdi mdi-account-plus text-white" id="deleteAllStudent"
+                       onclick="confirmDeleteAllStudentInClass({{ student.id_classroom.id_classroom }})">
+                        Xóa tất cả sinh viên
+                    </a>
+                {% endif %}
+            {% endfor %}
+            <a href="{% url 'admin_list_student_in_class_add' classroom_id=classroom_id %}"
+               class="btn btn-success mdi mdi-account-plus text-white"
+               id="addStudentInClass">Thêm sinh viên
+            </a>
+            <a href="{% url 'admin_list_student_in_class_add_list' classroom_id=classroom_id %}"
+               id="addListStudentInClass"
+               class="btn btn-success mdi mdi-account-plus text-white">Thêm danh sách sinh viên
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center" scope="col">MSSV</th>
+                    <th scope="col">Họ và tên</th>
+                    <th scope="col">Email</th>
+                    <th class="text-center" scope="col">Số điện thoại</th>
+                    <th scope="col">Địa chỉ</th>
+                    <th class="text-center" scope="col">Ngày sinh</th>
+                    <th class="text-center" scope="col">Đường dẫn ảnh</th>
+                    <th class="text-center" scope="col">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody class="customtable">
+                {% for student in students_in_class %}
+                    <tr>
+
+                        <td class="text-center">{{ student.id_student.id_student }}</td>
+                        <td>{{ student.id_student.student_name }}</td>
+                        <td>{{ student.id_student.email }}</td>
+                        <td class="text-center">{{ student.id_student.phone }}</td>
+                        <td>{{ student.id_student.address }}</td>
+                        <td class="text-center">{{ student.id_student.birthday|date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ student.id_student.PathImageFolder }}</td>
+                        <td class="text-center">
+                            <a href="#" class="btn btn-danger btn-sm mdi mdi-delete" id="deleteStudent"
+                               onclick="confirmDeleteStudentInClass({{ student.id_student.id_student }},{{ student.id_classroom.id_classroom }})">Xóa</a>
+                        </td>
+                    </tr>
+
+                {% empty %}
+                    <tr class="text-center text-danger">
+                        <td colspan="10"><strong>Không tồn tại sinh viên nào trong cơ sở dữ liệu!</strong></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination justify-content-center">
+            <ul class="pagination">
+                {% if students_in_class.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">‹‹</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ students_in_class.previous_page_number }}">‹</a>
+                    </li>
+                {% endif %}
+
+                {% for i in students_in_class.paginator.page_range %}
+                    {% if students_in_class.number == i %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% elif i > students_in_class.number|add:'-3' and i < students_in_class.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if students_in_class.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ students_in_class.next_page_number }}">›</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ students_in_class.paginator.num_pages }}">››</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="text-center">
+            <p>Trang {{ students_in_class.number }} / {{ students_in_class.paginator.num_pages }}</p>
+        </div>
+    </div>
+
+    {% include 'admin/modal-popup/popup_delete_student_in_class.html' %}
+    {% include 'admin/modal-popup/popup_delete_all_student_in_class.html' %}
+    {% include 'admin/modal-popup/popup_add_student_in_class.html' %}
+    {% include 'admin/modal-popup/popup_add_list_students_in_class.html' %}
+{% endblock %}
+
+{% block js %}
+    <script src="{% static '' %}assets/js/manage-student.js"></script>
+    <script src="{% static '' %}assets/js/manage-students-in-class.js"></script>
+    <script>
+        function confirmDeleteStudentInClass(studentId, classroomId) {
+            let deleteUrl = "{% url 'admin_list_student_in_class_delete' id_student=1 id_classroom=2 %}".replace('1', studentId).replace('2', classroomId);
+            $('#confirmDeleteButton').attr('href', deleteUrl);
+            $('#confirmDeleteModal').modal('show');
+            $('#studentIdToDelete').text(studentId);
+        }
+
+        function confirmDeleteAllStudentInClass(classroomId) {
+            let deleteUrl = "{% url 'admin_list_student_in_class_delete_all' id_classroom=2 %}".replace('2', classroomId);
+            $('#confirmDeleteAllButton').attr('href', deleteUrl);
+            $('#confirmDeleteAllModal').modal('show');
+        }
+
+    </script>
+    <script>
+        function addStudents() {
+            var file_path = document.getElementById('file_path');
+            if (file_path.files.length > 0) {
+                // Lấy đường dẫn của tệp tin
+                var filePath = file_path.value;
+                console.log("Đường dẫn tệp tin: " + filePath);
+            } else {
+                alert("Vui lòng chọn một tệp tin.");
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "admin/base_admin_dashboard.html" %}
+
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title mb-3">Danh sách thông báo</h3>
+            <a href="#" class="btn btn-success mdi mdi-account-plus text-white"
+               id="addNotification">Thêm thông báo
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center text-nowrap">Mã TB</th>
+                    <th class="text-center text-nowrap">Tiêu đề</th>
+                    <th class="text-center text-nowrap">Nội dung</th>
+                    <th class="text-center text-nowrap">Thông báo tới</th>
+                    <th class="text-center text-nowrap">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody class="customtable">
+                {% for blog_post in blog_posts %}
+                    <tr>
+                        <td class="text-center">{{ blog_post.id }}</td>
+                        <td>{{ blog_post.title }}</td>
+                        <td>{{ blog_post.body|safe }}</td>
+                        <td class="text-center">{{ blog_post.type }}</td>
+
+                        <td class="text-center text-nowrap">
+                            <a href="#" class="btn btn-danger btn-sm mdi mdi-delete" id="deleteStudent"
+                               onclick="confirmDeleteNotification({{ blog_post.id }})">Xóa</a>
+                            <a href="{% url 'edit_blog' blog_post_id=blog_post.id %}"
+                               class="btn btn-primary btn-sm mdi mdi-account-edit">
+                                Sửa
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr class="text-center text-danger">
+                        <td colspan="10"><strong>Không tồn tại bản ghi thông báo nào trong cơ sở dữ liệu!</strong></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    {% include 'admin/modal-popup/popup_add_notification.html' %}
+    {% include 'admin/modal-popup/popup_delete_notification.html' %}
+{% endblock %}
+
+{% block js %}
+    <script src="{% static '' %}assets/js/manage-notification.js"></script>
+    <script>
+        function confirmDeleteNotification(blog_postID) {
+            let deleteUrl = "{% url 'admin_notification_delete' '1' %}".replace('1', blog_postID);
+            $('#confirmDeleteButton').attr('href', deleteUrl);
+            $('#notificationDeleteModal').modal('show');
+            $('#blog_postID').text(blog_postID);
+        }
+    </script>
+{% endblock %}
