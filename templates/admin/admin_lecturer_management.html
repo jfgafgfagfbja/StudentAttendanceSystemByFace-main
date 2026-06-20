@@ -41,10 +41,12 @@
                         <td>{{ lecturer.address }}</td>
                         <td class="text-center">{{ lecturer.birthday|date:"d/m/Y" }}</td>
                         <td class="text-center">
-                            <a href="#" id="deleteLecturer" class="btn btn-danger btn-sm mdi mdi-delete"
-                               onclick="confirmDeleteLecturer({{ lecturer.id_staff }})">Xóa</a>
+                            <!-- DEBUG: Password button should be here -->
+                            <a href="{% url 'admin_lecturer_password' lecturer.id_staff %}" class="btn btn-info btn-sm mdi mdi-key">Mật khẩu</a>
                             <a href="#" id="editLecturer" class="btn btn-primary btn-sm mdi mdi-account-edit"
                                onclick="editLecturer({{ lecturer.id_staff }})">Sửa</a>
+                            <a href="#" id="deleteLecturer" class="btn btn-danger btn-sm mdi mdi-delete"
+                               onclick="confirmDeleteLecturer({{ lecturer.id_staff }})">Xóa</a>
                         </td>
                     </tr>
                     {% include 'admin/modal-popup/popup_edit_lecturer.html' %}

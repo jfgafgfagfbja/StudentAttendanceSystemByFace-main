@@ -50,14 +50,14 @@
                         <td class="text-center">{{ student.birthday|date:"d/m/Y" }}</td>
                         <td class="text-center">{{ student.PathImageFolder }}</td>
                         <td class="text-center">
+                            <!-- DEBUG: Password button should be here -->
                             <a href="#" class="btn btn-warning btn-sm mdi mdi-account-capture"
                                id="capture" onclick="capture({{ student.id_student }})">Chụp hình</a>
-                            <a href="#" class="btn btn-danger btn-sm mdi mdi-delete" id="deleteStudent"
-                               onclick="confirmDeleteStudent({{ student.id_student }})">Xóa</a>
+                            <a href="{% url 'admin_student_password' student.id_student %}" class="btn btn-info btn-sm mdi mdi-key">Mật khẩu</a>
                             <a href="#" class="btn btn-primary btn-sm mdi mdi-account-edit"
                                onclick="editStudent({{ student.id_student }})">Sửa</a>
-
-
+                            <a href="#" class="btn btn-danger btn-sm mdi mdi-delete" id="deleteStudent"
+                               onclick="confirmDeleteStudent({{ student.id_student }})">Xóa</a>
                         </td>
                     </tr>
                     {% include 'admin/modal-popup/popup_edit_student.html' %}
@@ -148,6 +148,11 @@
         function capture(studentId) {
             let id_student = studentId;
 
+            // FORCE cleanup any existing modal backdrops first
+            if (typeof forceCleanupModals === 'function') {
+                forceCleanupModals();
+            }
+
             $.ajax({
                 type: "GET",
                 url: "{% url 'admin_student_get_info' '1' %}".replace('1', id_student),
@@ -159,11 +164,19 @@
                     $('#email_capture').val(data.student.email);
                     $('#phone_capture').val(data.student.phone);
                     $('#address_capture').val(data.student.address);
-                    $('#birthday_capture').val(data.student.birthday); // Fixed line
+                    $('#birthday_capture').val(data.student.birthday);
                     $('#PathImageFolder_capture').val('./main/Dataset/FaceData/processed/' + id_student);
                     $('#captureStudentModal').modal('show');
 
                 },
+                error: function(xhr, status, error) {
+                    console.error('Error getting student info:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không thể lấy thông tin sinh viên. Vui lòng thử lại.'
+                    });
+                }
             });
             let isCheckingCapture = false;
             let captureIntervalId;
@@ -175,27 +188,50 @@
 
                 // Start checking capture status
                 captureIntervalId = setInterval(() => {
-                    fetch("/admin/student-management/check_capture_status/") // Replace with the correct URL
+                    fetch("/admin/student-management/check_capture_status/")
                         .then(response => response.json())
                         .then(data => {
                             if (data.capture_status === 1) {
-                                alert("Capture Success");
-                                let captureForm = $('#captureStudentForm');
-                                captureForm.attr('action', "{% url 'admin_student_capture' 0 %}".replace('0', studentId));
-                                captureForm.submit();
-
+                                // Clear interval first
                                 clearInterval(captureIntervalId);
                                 isCheckingCapture = false;
+                                window.currentCaptureInterval = null;
+                                
+                                // Stop video feed
+                                videoElement.src = "https://www.womanthology.co.uk/wp-content/uploads/2017/06/facescan.gif";
+                                
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '✅ Chụp ảnh hoàn tất!',
+                                    text: 'Lưu thông tin sinh viên và train model...',
+                                    allowOutsideClick: false,
+                                    didOpen: () => {
+                                        Swal.showLoading()
+                                    }
+                                });
+
+                                let captureForm = $('#captureStudentForm');
+                                captureForm.attr('action', "{% url 'admin_student_capture' 0 %}".replace('0', studentId));
+                                
+                                // Submit with delay to ensure file save
+                                setTimeout(() => {
+                                    captureForm.submit();
+                                }, 1000);
                             }
                         })
                         .catch(error => {
                             console.error("Error:", error);
+                            clearInterval(captureIntervalId);
+                            isCheckingCapture = false;
+                            window.currentCaptureInterval = null;
                         });
-                }, 1000);
+                }, 500);  // Check every 500ms
                 isCheckingCapture = true;
                 console.log("Started checking capture");
             }
 
+            // Store interval ID globally so it can be cleared when modal closes
+            window.currentCaptureInterval = captureIntervalId;
         }
 
 
@@ -328,6 +364,62 @@
                     });
                     console.error('Fetch Error:', error);
                 });
+        });
+
+        // CRITICAL: Force modal cleanup functions
+        function forceCleanupModals() {
+            // Remove all modal backdrops
+            $('.modal-backdrop').remove();
+            
+            // Remove modal-open class and reset body styles
+            $('body').removeClass('modal-open');
+            $('body').css({
+                'padding-right': '',
+                'overflow': ''
+            });
+            
+            // Hide all modals
+            $('.modal').removeClass('show').hide();
+            
+            console.log('Force modal cleanup completed');
+        }
+
+        // Modal event handlers to prevent backdrop issues
+        $(document).ready(function() {
+            // FORCE cleanup on page load
+            forceCleanupModals();
+            
+            // Clean up modal backdrops when any modal is hidden
+            $('.modal').on('hidden.bs.modal', function () {
+                forceCleanupModals();
+            });
+
+            // Ensure capture modal is properly cleaned up
+            $('#captureStudentModal').on('hidden.bs.modal', function () {
+                // Clear any running capture intervals
+                if (window.currentCaptureInterval) {
+                    clearInterval(window.currentCaptureInterval);
+                    window.currentCaptureInterval = null;
+                }
+                
+                // Stop video feed
+                const videoElement = document.getElementById('video-feed_student');
+                if (videoElement) {
+                    videoElement.src = "https://www.womanthology.co.uk/wp-content/uploads/2017/06/facescan.gif";
+                }
+                
+                // Force cleanup
+                forceCleanupModals();
+            });
+
+            // Handle modal close button clicks
+            $('.modal .btn-close, .modal [data-bs-dismiss="modal"]').on('click', function() {
+                const modal = $(this).closest('.modal');
+                modal.modal('hide');
+                
+                // Force cleanup after a delay
+                setTimeout(forceCleanupModals, 200);
+            });
         });
     </script>
 {% endblock %}

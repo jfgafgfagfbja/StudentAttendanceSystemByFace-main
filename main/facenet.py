@@ -34,13 +34,24 @@ import re
 from subprocess import Popen, PIPE
 
 import numpy as np
-import tensorflow as tf
+
+try:
+    import tensorflow as tf
+    from tensorflow.python.platform import gfile
+    from tensorflow.python.training import training
+except ImportError:
+    tf = None
+    gfile = None
+    training = None
+    
 from scipy import interpolate
 from scipy import misc
 from six import iteritems
-from sklearn.model_selection import KFold
-from tensorflow.python.platform import gfile
-from tensorflow.python.training import training
+
+try:
+    from sklearn.model_selection import KFold
+except ImportError:
+    KFold = None
 
 
 def triplet_loss(anchor, positive, negative, alpha):

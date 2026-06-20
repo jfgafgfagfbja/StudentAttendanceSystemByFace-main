@@ -6,60 +6,208 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Cổng thông tin nội bộ</title>
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static '' %}assets/images/favicon.png"/>
-    <link href="{% static '' %}dist/css/style.min.css" rel="stylesheet"/>
-    {% block css %}
-    {% endblock %}
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <title>{% block title %}Trường Đại học Kiến trúc Đà Nẵng - Cổng thông tin giảng viên{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{% static 'dist/css/style.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/university-theme.css' %}" rel="stylesheet"/>
+    
+    <style>
+        /* University Red Theme Override for Lecturer Dashboard */
+        body {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            font-family: "Inter", sans-serif;
+        }
+        
+        /* University Header */
+        .university-header-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 3px solid #ef4444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+        }
+        
+        .university-title {
+            text-align: center;
+            color: #dc2626;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Adjust main wrapper for fixed header */
+        #main-wrapper {
+            margin-top: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        /* Topbar styling */
+        .topbar {
+            background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand .logo-text img {
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Sidebar styling */
+        .left-sidebar {
+            background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%) !important;
+        }
+        
+        .sidebar-nav .sidebar-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav .sidebar-link:hover,
+        .sidebar-nav .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-left-color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        /* Page content styling */
+        .page-wrapper {
+            background: transparent;
+        }
+        
+        .container-fluid {
+            padding: 30px;
+        }
+        
+        /* Footer styling */
+        .footer {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            font-weight: 600;
+            padding: 20px;
+            border-top: 2px solid rgba(220, 38, 38, 0.2);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #main-wrapper {
+                margin: 10px;
+                margin-top: 70px;
+                border-radius: 15px;
+            }
+            
+            .university-title {
+                font-size: 1.1rem;
+            }
+            
+            .container-fluid {
+                padding: 20px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #main-wrapper {
+                margin: 5px;
+                margin-top: 75px;
+                border-radius: 10px;
+            }
+            
+            .university-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    
+    {% block css %}{% endblock %}
 </head>
 
 <body>
+<!-- University Header -->
+<div class="university-header-bar">
+    <div class="container">
+        <h1 class="university-title">Trường Đại học Kiến trúc Đà Nẵng</h1>
+    </div>
+</div>
+
 <div class="preloader">
     <div class="lds-ripple">
         <div class="lds-pos"></div>
         <div class="lds-pos"></div>
     </div>
 </div>
+
 <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
      data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
+
+    <!-- TOPBAR -->
     <header class="topbar" data-navbarbg="skin5">
         <nav class="navbar top-navbar navbar-expand-md navbar-dark">
             <div class="navbar-header" data-logobg="skin5">
                 <a class="navbar-brand" href="{% url 'lecturer_dashboard' %}">
                     <b class="logo-icon ps-2">
-                        <img src="{% static '' %}assets/images/favicon.png" alt="homepage" class="light-logo"
-                             width="25"/>
+                        <img src="{% static 'assets/images/favicon.png' %}" alt="homepage" class="light-logo" width="25"/>
                     </b>
                     <span class="logo-text ms-2">
-                        <img src="{% static '' %}assets/images/logo-text.png" alt="homepage" class="light-logo"style="height: 20px; width: auto;/>
+                        <img src="{% static 'assets/images/logo-text.png' %}" alt="homepage"
+                             class="light-logo" style="height: 20px; width: auto;"/>
                     </span>
                 </a>
                 <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="#">
                     <i class="ti-menu ti-close"></i>
                 </a>
             </div>
+
             <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
                 <ul class="navbar-nav float-start me-auto">
                     <li class="nav-item d-none d-lg-block">
-                        <span class="nav-link sidebartoggler waves-effect waves-light" Fdata-sidebartype="mini-sidebar">
+                        <span class="nav-link sidebartoggler waves-effect waves-light"
+                              data-sidebartype="mini-sidebar">
                             <i class="mdi mdi-menu font-24"></i>
                         </span>
                     </li>
                 </ul>
+
                 <ul class="navbar-nav float-end">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="#"
                            id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{% static '' %}assets/images/users/1.jpg" alt="user" class="rounded-circle"
-                                 width="31"/>
+                            <img src="{% static '' %}assets/images/users/1.jpg" alt="user" class="rounded-circle" width="31"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end user-dd animated" aria-labelledby="navbarDropdown">
+
+                            {% if created_time %}
+                            <li class="px-3 py-2 text-muted" style="font-size:.875rem;">
+                                <i class="mdi mdi-clock-outline"></i>
+                                Tài khoản được tạo lúc:
+                                <strong>{{ created_time|date:"H:i, d/m/Y" }}</strong><br>
+                                <small>
+                                    Đã hoạt động:
+                                    <span id="account-age-lecturer"
+                                          data-created="{{ created_time|date:'c' }}"></span>
+                                </small>
+                            </li>
+                            <li><div class="dropdown-divider"></div></li>
+                            {% endif %}
+
                             <li>
                                 <a class="dropdown-item" href="{% url 'lecturer_profile' %}">
                                     <i class="mdi mdi-account me-1 ms-1"></i>Quản lý hồ sơ
@@ -77,12 +225,25 @@
                                     <i class="fa fa-power-off me-1 ms-1"></i>Đăng xuất
                                 </a>
                             </li>
+
+                            {% if created_time %}
+                            <li><div class="dropdown-divider"></div></li>
+                            <li class="px-3 pb-2">
+                                <a class="btn btn-outline-primary btn-sm w-100"
+                                   href="{% url 'export-my-account' %}">
+                                    Tải thông tin tài khoản (CSV)
+                                </a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
             </div>
         </nav>
     </header>
+    <!-- /TOPBAR -->
+
+    <!-- SIDEBAR -->
     <aside class="left-sidebar" data-sidebarbg="skin5">
         <div class="scroll-sidebar">
             <nav class="sidebar-nav">
@@ -117,13 +278,13 @@
                             <li class="sidebar-item">
                                 <a href="{% url 'lecturer_attendance' %}" class="sidebar-link">
                                     <i class="mdi mdi-check-all"></i>
-                                    <span class="hide-menu"> Điểm danh sinh viên </span>
+                                    <span class="hide-menu">Điểm danh sinh viên</span>
                                 </a>
                             </li>
                             <li class="sidebar-item">
                                 <a href="{% url 'lecturer_history_list_classroom' %}" class="sidebar-link">
                                     <i class="mdi mdi-clock"></i>
-                                    <span class="hide-menu"> Lịch sử điểm danh </span>
+                                    <span class="hide-menu">Lịch sử điểm danh</span>
                                 </a>
                             </li>
                         </ul>
@@ -132,16 +293,20 @@
             </nav>
         </div>
     </aside>
+    <!-- /SIDEBAR -->
+
+    <!-- PAGE CONTENT -->
     <div class="page-wrapper">
         <div class="container-fluid">
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
         </div>
         <footer class="footer text-center">
             Attendance system was built and developed by DAU students
         </footer>
     </div>
 </div>
+
+<!-- SCRIPTS -->
 <script src="{% static '' %}assets/libs/jquery/dist/jquery.min.js"></script>
 <script src="{% static '' %}assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static '' %}assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
@@ -159,6 +324,38 @@
         todayHighlight: true,
     });
 </script>
-</body>
 
+<!-- JS tính thời gian hoạt động tài khoản GIẢNG VIÊN -->
+<script>
+    function renderAccountAge(spanId) {
+        var el = document.getElementById(spanId);
+        if (!el) return;
+
+        var createdStr = el.getAttribute('data-created');
+        if (!createdStr) return;
+
+        var createdDate = new Date(createdStr);
+        if (isNaN(createdDate)) return;
+
+        var now = new Date();
+        var diff = Math.floor((now - createdDate) / 1000);
+
+        if (diff < 0) diff = 0;
+
+        var days = Math.floor(diff / (24 * 3600));
+        diff %= 24 * 3600;
+        var hours = Math.floor(diff / 3600);
+        diff %= 3600;
+        var minutes = Math.floor(diff / 60);
+        var seconds = diff % 60;
+
+        el.textContent = days + " ngày " + hours + " giờ " +
+                         minutes + " phút " + seconds + " giây";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        renderAccountAge("account-age-lecturer");
+    });
+</script>
+</body>
 </html>

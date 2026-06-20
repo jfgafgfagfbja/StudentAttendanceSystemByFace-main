@@ -98,11 +98,18 @@
                     </div>
 
                     <div class="mb-3 form-group row d-flex justify-content-center">
-                        <label for="end_time" class="col-sm-3 control-label col-form-label">Giảng viên</label>
+                        <label for="lecturer_name" class="col-sm-3 control-label col-form-label">Giảng viên</label>
                         <div class="col-sm-9">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="lecturer_name" id="lecturer_name"
-                                       required>
+                                <select class="form-select" name="lecturer_name" id="lecturer_name">
+                                    <option value="">-- Chọn giảng viên --</option>
+                                    {% for lecturer in lecturers %}
+                                        <option value="{{ lecturer.id_staff }}" 
+                                                {% if schedule.id_lecturer.id_staff == lecturer.id_staff %}selected{% endif %}>
+                                            {{ lecturer.id_staff }} - {{ lecturer.staff_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                     </div>

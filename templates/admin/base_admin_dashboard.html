@@ -6,16 +6,240 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Cổng thông tin nội bộ</title>
+    <title>{% block title %}Trường Đại học Kiến trúc Đà Nẵng - Hệ thống quản lý điểm danh{% endblock %}</title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static '' %}assets/images/favicon.png"/>
-    <link href="{% static '' %}dist/css/style.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="{% static '' %}assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{% static 'dist/css/style.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/university-theme.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/modal-fix.css' %}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}"/>
+
+    <style>
+        /* University Red Theme Override */
+        body {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            font-family: "Inter", sans-serif;
+        }
+        
+        /* University Header */
+        .university-header-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 3px solid #ef4444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+        }
+        
+        .university-title {
+            text-align: center;
+            color: #dc2626;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Adjust main wrapper for fixed header */
+        #main-wrapper {
+            margin-top: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        /* Topbar styling */
+        .topbar {
+            background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand .logo-text img {
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Sidebar styling */
+        .left-sidebar {
+            background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%) !important;
+        }
+        
+        .sidebar-nav .sidebar-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav .sidebar-link:hover,
+        .sidebar-nav .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-left-color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-nav .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Page content styling */
+        .page-wrapper {
+            background: transparent;
+        }
+        
+        .container-fluid {
+            padding: 30px;
+        }
+        
+        /* Footer styling */
+        .footer {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            font-weight: 600;
+            padding: 20px;
+            border-top: 2px solid rgba(220, 38, 38, 0.2);
+        }
+        
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+        
+        /* Alert styling */
+        .alert-light {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(220, 38, 38, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #main-wrapper {
+                margin: 10px;
+                margin-top: 70px;
+                border-radius: 15px;
+            }
+            
+            .university-title {
+                font-size: 1.1rem;
+            }
+            
+            .container-fluid {
+                padding: 20px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #main-wrapper {
+                margin: 5px;
+                margin-top: 75px;
+                border-radius: 10px;
+            }
+            
+            .university-title {
+                font-size: 1rem;
+            }
+        }
+        
+        /* CRITICAL: Modal backdrop fix for gray screen issue */
+        .modal-backdrop {
+            z-index: 1040 !important;
+            opacity: 0.5 !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+        }
+        
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+        
+        .modal {
+            z-index: 1050 !important;
+        }
+        
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+        }
+        
+        /* Force cleanup stuck modals */
+        body:not(.modal-open) .modal-backdrop {
+            display: none !important;
+        }
+        
+        /* Modal styling for university theme */
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #ffffff;
+            border: none;
+            padding: 20px 25px;
+        }
+        
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-footer {
+            border: none;
+            padding: 20px 25px;
+            background: #f8fafc;
+        }
+        
+        /* Fix for video feed in modal */
+        #video-feed_student {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 
     {% block css %}{% endblock %}
 </head>
 
 <body>
+<!-- University Header -->
+<div class="university-header-bar">
+    <div class="container">
+        <h1 class="university-title">Trường Đại học Kiến trúc Đà Nẵng</h1>
+    </div>
+</div>
+
 <div class="preloader">
     <div class="lds-ripple">
         <div class="lds-pos"></div>
@@ -62,7 +286,14 @@
                             {% if created_time %}
                             <li class="px-3 py-2 text-muted" style="font-size:.875rem;">
                                 <i class="mdi mdi-clock-outline"></i>
-                                Tài khoản tạo lúc: {{ created_time|localtime|date:"H:i, d/m/Y" }}
+                                Tài khoản được tạo lúc:
+                                <strong>{{ created_time|localtime|date:"H:i, d/m/Y" }}</strong>
+                                <br>
+                                <small>
+                                    Đã hoạt động:
+                                    <span id="account-age-dropdown"
+                                          data-created="{{ created_time|localtime|date:'c' }}"></span>
+                                </small>
                             </li>
                             <li><div class="dropdown-divider"></div></li>
                             {% endif %}
@@ -141,6 +372,11 @@
                                     <i class="mdi mdi-account-edit"></i> <span class="hide-menu">Quản lý lớp học</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'admin_reset_password' %}" class="sidebar-link">
+                                    <i class="mdi mdi-key"></i> <span class="hide-menu">Reset mật khẩu</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
@@ -157,12 +393,39 @@
             <div class="alert alert-light border d-flex align-items-center justify-content-between mb-3">
                 <div class="text-muted">
                     <i class="mdi mdi-clock-outline me-1"></i>
-                    Tài khoản được tạo lúc: <strong>{{ created_time|localtime|date:"H:i, d/m/Y" }}</strong>
+                    Tài khoản được tạo lúc:
+                    <strong>{{ created_time|localtime|date:"H:i, d/m/Y" }}</strong>
+                    <span class="text-muted ms-2">
+                        (Đã hoạt động:
+                        <span id="account-age-banner"
+                              data-created="{{ created_time|localtime|date:'c' }}"></span>)
+                    </span>
                 </div>
                 <a class="btn btn-sm btn-outline-primary" href="{% url 'export-my-account' %}">
                     Tải thông tin (CSV)
                 </a>
             </div>
+            {% endif %}
+
+            <!-- Messages Display -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <strong>
+                            {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i> Thành công!
+                            {% elif message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i> Lỗi!
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i> Cảnh báo!
+                            {% else %}
+                                <i class="fas fa-info-circle"></i> Thông báo!
+                            {% endif %}
+                        </strong>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
             {% endif %}
 
             {% block content %}{% endblock %}
@@ -191,6 +454,145 @@
         todayHighlight: true,
     });
 </script>
+
+<!-- JS tính thời gian tồn tại tài khoản (ngày/giờ/phút/giây) -->
+<script>
+    // CRITICAL: Force cleanup any stuck modal backdrops on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        // Remove any existing modal backdrops
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        
+        // Remove modal-open class from body
+        document.body.classList.remove('modal-open');
+        document.body.style.paddingRight = '';
+        document.body.style.overflow = '';
+        
+        // Setup account age updates
+        updateAccountAges();
+        setInterval(updateAccountAges, 1000);
+        
+        // Add global modal event listeners
+        setupModalCleanup();
+    });
+
+    function setupModalCleanup() {
+        // Listen for all modal events
+        document.addEventListener('show.bs.modal', function (e) {
+            console.log('Modal showing:', e.target.id);
+        });
+        
+        document.addEventListener('shown.bs.modal', function (e) {
+            console.log('Modal shown:', e.target.id);
+        });
+        
+        document.addEventListener('hide.bs.modal', function (e) {
+            console.log('Modal hiding:', e.target.id);
+        });
+        
+        document.addEventListener('hidden.bs.modal', function (e) {
+            console.log('Modal hidden:', e.target.id);
+            
+            // Force cleanup after modal is hidden
+            setTimeout(() => {
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => {
+                    backdrop.remove();
+                    console.log('Removed stuck backdrop');
+                });
+                
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+                document.body.style.overflow = '';
+                
+                console.log('Modal cleanup completed');
+            }, 100);
+        });
+    }
+
+    function renderAccountAge(spanId) {
+        var el = document.getElementById(spanId);
+        if (!el) return;
+
+        var createdStr = el.getAttribute('data-created');
+        if (!createdStr) return;
+
+        var createdDate = new Date(createdStr);
+        if (isNaN(createdDate)) return;
+
+        var now = new Date();
+        var diff = Math.floor((now - createdDate) / 1000); // giây
+
+        if (diff < 0) diff = 0;
+
+        var days = Math.floor(diff / (24 * 3600));
+        diff %= 24 * 3600;
+
+        var hours = Math.floor(diff / 3600);
+        diff %= 3600;
+
+        var minutes = Math.floor(diff / 60);
+        var seconds = diff % 60;
+
+        el.textContent = days + " ngày " + hours + " giờ " +
+                         minutes + " phút " + seconds + " giây";
+    }
+
+    function updateAccountAges() {
+        renderAccountAge("account-age-dropdown");
+        renderAccountAge("account-age-banner");
+    }
+</script>
+
 {% block js %}{% endblock %}
+
+<!-- CRITICAL: Emergency modal cleanup script -->
+<script>
+// Emergency cleanup function that runs every 2 seconds
+setInterval(function() {
+    // Check for stuck modal backdrops
+    const stuckBackdrops = document.querySelectorAll('.modal-backdrop');
+    const openModals = document.querySelectorAll('.modal.show');
+    
+    // If there are backdrops but no open modals, remove them
+    if (stuckBackdrops.length > 0 && openModals.length === 0) {
+        console.log('Found stuck modal backdrops, cleaning up...');
+        stuckBackdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.paddingRight = '';
+        document.body.style.overflow = '';
+    }
+}, 2000);
+
+// Force cleanup on page visibility change
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        setTimeout(() => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            if (backdrops.length > 0) {
+                console.log('Page became visible, cleaning up modal backdrops...');
+                backdrops.forEach(backdrop => backdrop.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+                document.body.style.overflow = '';
+            }
+        }, 500);
+    }
+});
+
+// Force cleanup on window focus
+window.addEventListener('focus', function() {
+    setTimeout(() => {
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        if (backdrops.length > 0) {
+            console.log('Window focused, cleaning up modal backdrops...');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '';
+            document.body.style.overflow = '';
+        }
+    }, 300);
+});
+</script>
 </body>
 </html>

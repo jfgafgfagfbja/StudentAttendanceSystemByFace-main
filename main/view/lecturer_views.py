@@ -11,23 +11,18 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.decorators import gzip
+import cv2
+import numpy as np
 
 from main.decorators import lecturer_required
 from main.models import StaffInfo, StudentClassDetails
-from main.src.anti_spoof_predict import AntiSpoofPredict
-from main.src.generate_patches import CropImage
-from main.src.utility import parse_model_name
 from main.view.reg import *
 from main.models import BlogPost
 
-model_test = AntiSpoofPredict(0)
-image_cropper = CropImage()
+# ========== FACE RECOGNITION USES HAAR CASCADE (NO ANTI-SPOOF) =========
+# Anti-spoof was causing hanging issues, now using Haar Cascade in reg.py
 
-model_dir = "main/resources/anti_spoof_models"
-device_id = 0
-
-for model_name in os.listdir(model_dir):
-    h_input, w_input, model_type, scale = parse_model_name(model_name)
+# Face detection handled in reg.py using Haar Cascade
 
 
 @lecturer_required
@@ -188,67 +183,11 @@ def lecturer_mark_attendance(request, classroom_id):
     return render(request, 'lecturer/lecturer_mask_attendance.html', context)
 
 
-def generate_frames(model_dir, device_id):
-    model_test = AntiSpoofPredict(device_id)
-    image_cropper = CropImage()
-    capture = cv2.VideoCapture(1)  # Change this to the desired camera index.
-
-    while True:
-        ret, frame = capture.read()
-        if not ret:
-            break
-
-        image_bbox = model_test.get_bbox(frame)
-
-        prediction = np.zeros((1, 3))
-        test_speed = 0
-        for model_name in os.listdir(model_dir):
-            h_input, w_input, model_type, scale = parse_model_name(model_name)
-            param = {
-                "org_img": frame,
-                "bbox": image_bbox,
-                "scale": scale,
-                "out_w": w_input,
-                "out_h": h_input,
-                "crop": True,
-            }
-            if scale is None:
-                param["crop"] = False
-            img = image_cropper.crop(**param)
-            start = time.time()
-            prediction += model_test.predict(img, os.path.join(model_dir, model_name))
-            test_speed += time.time() - start
-
-        label = np.argmax(prediction)
-        value = prediction[0][label] / 2
-        if label == 1:
-            result_text = "RealFace Score: {:.2f}".format(value)
-            color = (255, 0, 0)
-        else:
-            result_text = "FakeFace Score: {:.2f}".format(value)
-            color = (0, 0, 255)
-
-        cv2.rectangle(
-            frame,
-            (image_bbox[0], image_bbox[1] - 50),
-            (image_bbox[0] + image_bbox[2], image_bbox[1] + image_bbox[3]),
-            color, 2)
-
-        cv2.putText(
-            frame,
-            result_text,
-            (image_bbox[0], image_bbox[1]),
-            cv2.FONT_HERSHEY_COMPLEX, 1.5 * frame.shape[0] / 1024, color)
-
-        ret, buffer = cv2.imencode('.jpg', frame)
-        if ret:
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n\r\n')
-
-    capture.release()
-    cv2.destroyAllWindows()
+# Removed unused generate_frames function that had anti-spoof issues
+# Face recognition streaming is handled by live_video_feed2 -> main() from reg.py
 
 
+@lecturer_required
 @gzip.gzip_page
 def live_video_feed2(request, classroom_id):
     print(classroom_id)
@@ -256,6 +195,7 @@ def live_video_feed2(request, classroom_id):
                                  content_type="multipart/x-mixed-replace; boundary=frame")
 
 
+@lecturer_required
 def lecturer_mark_attendance_by_face(request, classroom_id):
     classroom = Classroom.objects.get(pk=classroom_id)
     students_in_class = StudentClassDetails.objects.filter(id_classroom=classroom)

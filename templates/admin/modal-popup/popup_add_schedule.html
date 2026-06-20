@@ -92,8 +92,14 @@
                         <label for="id_lecturer" class="col-sm-3 control-label col-form-label">Giảng viên</label>
                         <div class="col-sm-9">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="id_lecturer" id="id_lecturer"
-                                       placeholder="Nhập mã giảng viên giảng dạy" required>
+                                <select class="form-select" name="id_lecturer" id="id_lecturer">
+                                    <option value="">-- Chọn giảng viên --</option>
+                                    {% for lecturer in lecturers %}
+                                        <option value="{{ lecturer.id_staff }}">
+                                            {{ lecturer.id_staff }} - {{ lecturer.staff_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                     </div>

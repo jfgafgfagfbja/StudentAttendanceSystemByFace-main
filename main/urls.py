@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from django.urls import path
+from django.shortcuts import redirect
 from main import views
 
 from main.view import admin_views
@@ -14,9 +15,12 @@ from main.view.admin_views import AddBlog, EditBlogView, BlogPostDeleteView
 # Create your views here.
 urlpatterns = [
     path('', views.home, name='choose_login'),
+    path('blog/<int:blog_id>/', views.blog_detail, name='blog_detail'),
+    path('test-admin-login', views.test_admin_login, name='test_admin_login'),
     path('login', views.login_view, name='login'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    # Admin
+    # Admin redirect
+    path('admin/', lambda request: redirect('admin_dashboard')),
     path('admin/notification-management', AddBlog.as_view(), name='admin_notification_view'),
     path('admin/notification-management/edit/<int:blog_post_id>/', EditBlogView.as_view(), name='edit_blog'),
     path('admin/notification-management/delete/<int:pk>/', BlogPostDeleteView.as_view(),
@@ -27,26 +31,30 @@ urlpatterns = [
     path('admin/change-password', admin_views.admin_change_password_view, name='admin_change_password'),
     path('admin/student-management', admin_views.admin_student_management_view, name='admin_student_management'),
     path('admin/student-management/add', admin_views.admin_student_add, name='admin_student_add'),
-    path('admin/student-management/delete/<int:id_student>', admin_views.admin_student_delete,
+    path('admin/student-management/delete/<str:id_student>', admin_views.admin_student_delete,
          name='admin_student_delete'),
-    path('admin/student-management/edit/<int:id_student>', admin_views.admin_student_edit, name='admin_student_edit'),
-    path('admin/student-management/student_capture/<int:id_student>', admin_views.admin_student_capture,
+    path('admin/student-management/edit/<str:id_student>', admin_views.admin_student_edit, name='admin_student_edit'),
+    path('admin/student-management/password/<str:id_student>', admin_views.admin_student_password_view, name='admin_student_password'),
+    path('admin/student-management/get-password/<str:id_student>', admin_views.get_student_password, name='get_student_password'),
+    path('admin/student-management/student_capture/<str:id_student>', admin_views.admin_student_capture,
          name='admin_student_capture'),
 
-    path('admin/student-management/get-info/<int:id_student>', admin_views.admin_student_get_info,
+    path('admin/student-management/get-info/<str:id_student>', admin_views.admin_student_get_info,
          name='admin_student_get_info'),
     path('admin/student-management/train', admin_views.train, name='train'),
     path('admin/student-management/check_capture_status/', admin_views.check_capture_status,
          name='check_capture_status'),
-    path('admin/student-management/live_video_feed/<int:id_student>', admin_views.live_video_feed,
+    path('admin/student-management/live_video_feed/<str:id_student>', admin_views.live_video_feed,
          name='live_video_feed'),
 
     path('admin/lecturer-management', admin_views.admin_lecturer_management_view, name='admin_lecturer_management'),
     path('admin/lecturer-management/add', admin_views.admin_lecturer_add, name='admin_lecturer_add'),
-    path('admin/lecturer-management/delete/<int:id_staff>', admin_views.admin_lecturer_delete,
+    path('admin/lecturer-management/delete/<str:id_staff>', admin_views.admin_lecturer_delete,
          name='admin_lecturer_delete'),
-    path('admin/lecturer-management/edit/<int:id_staff>', admin_views.admin_lecturer_edit, name='admin_lecturer_edit'),
-    path('admin/lecturer-management/get-info/<int:id_staff>', admin_views.admin_lecturer_get_info,
+    path('admin/lecturer-management/edit/<str:id_staff>', admin_views.admin_lecturer_edit, name='admin_lecturer_edit'),
+    path('admin/lecturer-management/password/<str:id_staff>', admin_views.admin_lecturer_password_view, name='admin_lecturer_password'),
+    path('admin/lecturer-management/get-password/<str:id_staff>', admin_views.get_lecturer_password, name='get_lecturer_password'),
+    path('admin/lecturer-management/get-info/<str:id_staff>', admin_views.admin_lecturer_get_info,
          name='admin_lecturer_get_info'),
 
     path('admin/student-management/capture/cap', admin_views.capture, name='capture'),
@@ -69,12 +77,17 @@ urlpatterns = [
          name='admin_list_student_in_class_add_list'),
     path('admin/list-student-in-class-management/add/<int:classroom_id>', admin_views.admin_list_student_in_class_add,
          name='admin_list_student_in_class_add'),
-    path('admin/list-student-in-class-management/delete/<int:id_classroom>/<int:id_student>',
+    path('admin/list-student-in-class-management/delete/<int:id_classroom>/<str:id_student>',
          admin_views.admin_list_student_in_class_delete,
          name='admin_list_student_in_class_delete'),
     path('admin/list-student-in-class-management/delete-all/<int:id_classroom>',
          admin_views.admin_list_student_in_class_delete_all,
          name='admin_list_student_in_class_delete_all'),
+    
+    # Password Management
+    path('admin/reset-password', admin_views.admin_reset_password, name='admin_reset_password'),
+    path('admin/test-password/<str:id_student>', admin_views.test_password_form, name='test_password_form'),
+    path('admin/demo-password-view', admin_views.demo_password_view, name='demo_password_view'),
 
     # Lecturer
     path('lecturer/dashboard', lecturer_views.lecturer_dashboard_view, name='lecturer_dashboard'),
